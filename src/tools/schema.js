@@ -87,6 +87,91 @@ export const functionDeclarations = [
   },
 ];
 
+// Same five tools as functionDeclarations above, expressed in the plain JSON \
+// Schema dialect ollama-js expects (lowercase 'object'/'string'/'array' type \
+// strings) instead of Gemini's Type enum.
+export const ollamaTools = [
+  {
+    type: 'function',
+    function: {
+      name: 'write_file',
+      description:
+        'Create or overwrite a file inside the working folder. Creates parent directories as needed. Use this to write Manim scene scripts (.py files).',
+      parameters: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'Path relative to the working folder, e.g. "scene.py".' },
+          content: { type: 'string', description: 'Full text content to write to the file.' },
+        },
+        required: ['path', 'content'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'read_file',
+      description: 'Read the full text content of a file inside the working folder.',
+      parameters: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'Path relative to the working folder, e.g. "scene.py".' },
+        },
+        required: ['path'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'delete_file',
+      description: 'Delete a file or directory inside the working folder.',
+      parameters: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'Path relative to the working folder to delete.' },
+        },
+        required: ['path'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'list_files',
+      description: 'List files and directories at a path inside the working folder (defaults to the root).',
+      parameters: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'Path relative to the working folder to list. Defaults to "." (the root).' },
+        },
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'execute_python',
+      description:
+        'Run a Python file inside the working folder with python3 and return stdout, stderr, and the exit code. ' +
+        'To render a Manim scene, write a script that ends with `if __name__ == "__main__": MySceneName().render()` ' +
+        'and then execute that file. Rendered output is written under media/ inside the working folder.',
+      parameters: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'Path to the Python file to run, relative to the working folder.' },
+          args: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Optional command-line arguments to pass to the script.',
+          },
+        },
+        required: ['path'],
+      },
+    },
+  },
+];
+
 const handlers = {
   write_file: writeFile,
   read_file: readFile,
